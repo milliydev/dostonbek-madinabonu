@@ -234,10 +234,6 @@ button{font:inherit;cursor:pointer}
   <div class="in">
     <p class="guest">MUHTARAM MEHMONIMIZ</p>
     <p class="it">Sizni hurmat va ehtirom ila<br>farzandlarimizning nikoh to'ylariga<br>taklif qilamiz</p>
-    <div class="verse">
-      <p class="it">«Ey Rabbimiz, bizga juftlarimiz va farzandlarimizdan ko'zlarimizni quvontiradiganlarini ato et va bizni taqvodorlarga peshvo qil.»</p>
-      <cite>FURQON SURASI, 74-OYAT</cite>
-    </div>
     <h2 class="names" style="margin-top:26px">Dostonbek &amp;<br>Madinabonu</h2>
   </div>
 </section>
@@ -283,17 +279,8 @@ button{font:inherit;cursor:pointer}
     <div class="div"><i></i></div>
     <div id="form">
       <p class="ask">Kelasizmi?</p>
-      <p class="it">Iltimos, 25-noyabrgacha javob bering</p>
       <p class="q">ISMINGIZ</p>
       <input class="inp" id="gname" type="text" autocomplete="name" placeholder="Ism, familiya" aria-label="Ismingiz">
-      <div id="countWrap">
-        <p class="q">NECHTA KISHI KELASIZ?</p>
-        <div class="stepper">
-          <button type="button" id="minus" aria-label="Kamaytirish">−</button>
-          <output id="people" aria-live="polite">1</output>
-          <button type="button" id="plus" aria-label="Ko'paytirish">+</button>
-        </div>
-      </div>
       <div class="stack" role="group" aria-label="Javobingiz">
         <button type="button" class="obtn ch" data-v="yes" aria-pressed="false">✓ &nbsp;KELAMAN</button>
         <button type="button" class="obtn ch" data-v="no" aria-pressed="false">✕ &nbsp;KELA OLMAYMAN</button>
@@ -316,7 +303,6 @@ button{font:inherit;cursor:pointer}
     <div class="mono">D&amp;M</div>
     <div class="div"><i></i></div>
     <p class="it">Sizning e'tiboringiz va duoyingiz —<br>biz uchun eng qimmatli sovg'a.</p>
-    <p class="it" style="margin-top:14px">Sizni ko'rishni sabrsizlik bilan kutamiz.</p>
     <p class="label" style="margin-top:30px;font-size:11px">HURMAT BILAN</p>
     <p style="font-family:var(--script);font-size:46px;line-height:1.2;color:var(--gold-l);margin:6px 0 0">Raxmatovlar oilasi</p>
     <div class="w"><button type="button" class="obtn" id="share">ULASHISH</button></div>
@@ -379,16 +365,14 @@ button{font:inherit;cursor:pointer}
   var cb=document.querySelectorAll(".cur button");
   cb.forEach(function(b){b.addEventListener("click",function(){cb.forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});document.getElementById("curnote").textContent=notes[b.dataset.c];});});
 
-  var answer=null,people=1,out=document.getElementById("people");
+  var answer=null;
   var btns=document.querySelectorAll(".ch");
-  btns.forEach(function(b){b.addEventListener("click",function(){answer=b.dataset.v;btns.forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});document.getElementById("countWrap").style.display=answer==="no"?"none":"";document.getElementById("err").textContent="";});});
-  document.getElementById("minus").addEventListener("click",function(){if(people>1){people--;out.textContent=people;}});
-  document.getElementById("plus").addEventListener("click",function(){if(people<20){people++;out.textContent=people;}});
+  btns.forEach(function(b){b.addEventListener("click",function(){answer=b.dataset.v;btns.forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});document.getElementById("err").textContent="";});});
   document.getElementById("send").addEventListener("click",function(){
     var name=document.getElementById("gname").value.trim(),err=document.getElementById("err");
     if(!name){err.textContent="Iltimos, ismingizni yozing";return;}
     if(!answer){err.textContent="Kelaman yoki Kela olmayman ni tanlang";return;}
-    var msg="💌 To'yga javob (Dostonbek & Madinabonu, 28-noyabr)\n\nIsm: "+name+"\nJavob: "+(answer==="yes"?"✅ Kelaman":"❌ Kela olmayman")+(answer==="yes"?"\nNecha kishi: "+people:"")+"\n\nTabriklayman!";
+    var msg="💌 To'yga javob (Dostonbek & Madinabonu, 28-noyabr)\n\nIsm: "+name+"\nJavob: "+(answer==="yes"?"✅ Kelaman":"❌ Kela olmayman")+"\n\nTabriklayman!";
     copy(msg,"Javob nusxalandi, Telegram ochilmoqda");
     window.open("https://t.me/share/url?url="+encodeURIComponent(location.href.split("#")[0])+"&text="+encodeURIComponent(msg),"_blank","noopener");
     document.getElementById("form").style.display="none";
