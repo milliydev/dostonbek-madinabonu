@@ -337,7 +337,7 @@ button{font:inherit;cursor:pointer}
   // Avtomatik sekin pastga tushish (mehmon ekranga tegsa to'xtaydi)
   function autoScroll(){
     if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    var SPEED=45,y=window.pageYOffset,last=null,stopped=false,evs=["wheel","touchstart","mousedown","keydown"];
+    var SPEED=70,y=window.pageYOffset,last=null,stopped=false,evs=["wheel","touchstart","mousedown","keydown"];
     function stop(){stopped=true;evs.forEach(function(e){window.removeEventListener(e,stop)});}
     evs.forEach(function(e){window.addEventListener(e,stop,{passive:true})});
     (function step(t){
