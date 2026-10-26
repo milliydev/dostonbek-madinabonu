@@ -332,7 +332,26 @@ button{font:inherit;cursor:pointer}
 (function(){
   var WEDDING=new Date("2026-11-28T18:00:00+05:00");
   var cover=document.getElementById("cover");
-  document.getElementById("openBtn").addEventListener("click",function(){cover.classList.add("open");document.body.classList.add("opened");document.body.classList.remove("locked");window.scrollTo(0,0);setTimeout(function(){cover.classList.add("gone");},1500);setTimeout(startReveal,700);playSong();});
+  document.getElementById("openBtn").addEventListener("click",function(){cover.classList.add("open");document.body.classList.add("opened");document.body.classList.remove("locked");window.scrollTo(0,0);setTimeout(function(){cover.classList.add("gone");},1500);setTimeout(startReveal,700);setTimeout(autoScroll,3200);playSong();});
+
+  // Avtomatik sekin pastga tushish (mehmon ekranga tegsa to'xtaydi)
+  function autoScroll(){
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    var SPEED=45,y=window.pageYOffset,last=null,stopped=false,evs=["wheel","touchstart","mousedown","keydown"];
+    function stop(){stopped=true;evs.forEach(function(e){window.removeEventListener(e,stop)});}
+    evs.forEach(function(e){window.addEventListener(e,stop,{passive:true})});
+    (function step(t){
+      if(stopped)return;
+      if(last!==null){
+        var max=document.documentElement.scrollHeight-window.innerHeight;
+        var k=Math.min(1,y/200);
+        y=Math.min(max,y+SPEED*(.25+.75*k)*(t-last)/1000);
+        window.scrollTo(0,y);
+        if(y>=max){stop();return;}
+      }
+      last=t;requestAnimationFrame(step);
+    })(null);
+  }
 
   var cal=document.getElementById("cal");
   ["Du","Se","Ch","Pa","Ju","Sh","Ya"].forEach(function(d){var e=document.createElement("div");e.className="dn";e.textContent=d;cal.appendChild(e);});
