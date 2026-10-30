@@ -310,7 +310,7 @@ button{font:inherit;cursor:pointer}
   </div>
 </section>
 
-<audio id="song" src="musiqa.m4a" loop preload="auto" playsinline></audio>
+<audio id="song" src="klent.mp3#t=58,95" preload="auto" playsinline></audio>
 <button type="button" class="music" id="musicBtn" aria-label="Musiqani o'chirish"><span class="note">♫</span></button>
 <div class="toast" id="toast" role="status"></div>
 
@@ -387,6 +387,13 @@ button{font:inherit;cursor:pointer}
 
   // Musiqa
   var song=document.getElementById("song"),mBtn=document.getElementById("musicBtn");
+  // Faqat 0:58 – 1:35 oralig'i aylanib chaladi
+  var S0=58,S1=95;
+  function toStart(){try{song.currentTime=S0;}catch(e){}}
+  song.addEventListener("loadedmetadata",toStart);
+  song.addEventListener("timeupdate",function(){if(song.currentTime>=S1||song.currentTime<S0-1){toStart();if(song.paused&&mBtn.classList.contains("playing"))song.play();}});
+  song.addEventListener("pause",function(){if(song.currentTime>=S1-.3&&mBtn.classList.contains("playing")){toStart();song.play();}});
+  song.addEventListener("ended",function(){toStart();song.play();});
   function setM(p){mBtn.classList.toggle("playing",p);mBtn.setAttribute("aria-label",p?"Musiqani o'chirish":"Musiqani yoqish");}
   function playSong(){
     mBtn.classList.add("on");song.volume=0;
