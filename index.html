@@ -318,21 +318,27 @@ button{font:inherit;cursor:pointer}
 (function(){
   var WEDDING=new Date("2026-11-28T18:00:00+05:00");
   var cover=document.getElementById("cover");
-  document.getElementById("openBtn").addEventListener("click",function(){cover.classList.add("open");document.body.classList.add("opened");document.body.classList.remove("locked");window.scrollTo(0,0);setTimeout(function(){cover.classList.add("gone");},1500);setTimeout(startReveal,700);setTimeout(autoScroll,3200);playSong();});
+  var opened=false;
+  function openInv(){if(opened)return;opened=true;cover.classList.add("open");document.body.classList.add("opened");document.body.classList.remove("locked");window.scrollTo(0,0);setTimeout(function(){cover.classList.add("gone");},1500);setTimeout(startReveal,700);setTimeout(autoScroll,3200);if(song.paused)playSong();}
+  document.getElementById("openBtn").addEventListener("click",openInv);
+  // Sayt ochilishi bilan taklifnoma o'zi ochiladi
+  window.addEventListener("load",function(){setTimeout(openInv,1200);});
 
-  // Avtomatik sekin pastga tushish (mehmon ekranga tegsa to'xtaydi)
+  // Avtomatik sekin pastga tushish (mehmon o'zi aylantirsa, darhol to'xtaydi va xalaqit bermaydi)
   function autoScroll(){
     if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    var SPEED=70,y=window.pageYOffset,last=null,stopped=false,evs=["wheel","touchstart","mousedown","keydown"];
+    var SPEED=70,y=window.pageYOffset,last=null,stopped=false,evs=["wheel","touchstart","touchmove","pointerdown","mousedown","keydown"];
     function stop(){stopped=true;evs.forEach(function(e){window.removeEventListener(e,stop)});}
     evs.forEach(function(e){window.addEventListener(e,stop,{passive:true})});
     (function step(t){
       if(stopped)return;
       if(last!==null){
+        // Sahifa boshqa yo'l bilan siljigan bo'lsa (qo'l bilan), unga qarshi turmaslik
+        if(Math.abs(window.pageYOffset-Math.round(y))>2){stop();return;}
         var max=document.documentElement.scrollHeight-window.innerHeight;
         var k=Math.min(1,y/200);
-        y=Math.min(max,y+SPEED*(.25+.75*k)*(t-last)/1000);
-        window.scrollTo(0,y);
+        y=Math.min(max,y+SPEED*(.25+.75*k)*Math.min(t-last,50)/1000);
+        window.scrollTo(0,Math.round(y));
         if(y>=max){stop();return;}
       }
       last=t;requestAnimationFrame(step);
@@ -395,12 +401,17 @@ button{font:inherit;cursor:pointer}
   song.addEventListener("pause",function(){if(song.currentTime>=S1-.3&&mBtn.classList.contains("playing")){toStart();song.play();}});
   song.addEventListener("ended",function(){toStart();song.play();});
   function setM(p){mBtn.classList.toggle("playing",p);mBtn.setAttribute("aria-label",p?"Musiqani o'chirish":"Musiqani yoqish");}
+  var gestEvs=["pointerdown","touchend","mousedown","click","keydown"];
+  function waitGesture(){gestEvs.forEach(function(e){window.addEventListener(e,onGesture,{passive:true,capture:true})});}
+  function onGesture(){gestEvs.forEach(function(e){window.removeEventListener(e,onGesture,{capture:true})});if(song.paused&&!mBtn.dataset.off)playSong();}
   function playSong(){
     mBtn.classList.add("on");song.volume=0;
     var pr=song.play();
-    if(pr&&pr.then){pr.then(function(){setM(true);var v=0;var f=setInterval(function(){v+=.05;if(v>=.8){v=.8;clearInterval(f);}song.volume=v;},120);}).catch(function(){setM(false);});}
+    if(pr&&pr.then){pr.then(function(){setM(true);var v=0;var f=setInterval(function(){v+=.05;if(v>=.8){v=.8;clearInterval(f);}song.volume=v;},120);}).catch(function(){setM(false);waitGesture();});}
   }
-  mBtn.addEventListener("click",function(){if(song.paused){song.volume=.8;song.play().then(function(){setM(true)}).catch(function(){toast("Musiqani yoqib bo'lmadi")});}else{song.pause();setM(false);}});
+  // Sayt ochilishi bilan musiqani boshlashga urinish; brauzer bloklasa, birinchi teginishda yoqiladi
+  playSong();
+  mBtn.addEventListener("click",function(){if(song.paused){delete mBtn.dataset.off;song.volume=.8;song.play().then(function(){setM(true)}).catch(function(){toast("Musiqani yoqib bo'lmadi")});}else{mBtn.dataset.off="1";song.pause();setM(false);}});
   document.addEventListener("visibilitychange",function(){if(document.hidden&&!song.paused){song.pause();song.dataset.resume="1";}else if(!document.hidden&&song.dataset.resume){song.dataset.resume="";song.play().then(function(){setM(true)}).catch(function(){setM(false)});}});
 
   // Scroll reveal
