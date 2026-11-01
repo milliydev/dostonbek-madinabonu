@@ -7,8 +7,8 @@
 <meta name="description" content="Dostonbek & Madinabonuning nikoh to'yiga samimiy qalbimiz bilan taklif etamiz. 28 Noyabr 2026, soat 18:00.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet"></noscript><style>
 :root{
   --dark:#16130e; --dark2:#1f1a12; --light:#faf6ec; --gold:#c9a24e; --gold-l:#e3c47a; --gold-d:#8f6d28;
   --ink:#3b3226; --muted:#7b6e5b; --line:rgba(201,162,78,.45);
@@ -273,30 +273,6 @@ button{font:inherit;cursor:pointer}
   </div>
 </section>
 
-<section class="sec d">
-  <div class="in">
-    <p class="label">TASDIQ</p>
-    <div class="div"><i></i></div>
-    <div id="form">
-      <p class="ask">Kelasizmi?</p>
-      <p class="q">ISMINGIZ</p>
-      <input class="inp" id="gname" type="text" autocomplete="name" placeholder="Ism, familiya" aria-label="Ismingiz">
-      <div class="stack" role="group" aria-label="Javobingiz">
-        <button type="button" class="obtn ch" data-v="yes" aria-pressed="false">✓ &nbsp;KELAMAN</button>
-        <button type="button" class="obtn ch" data-v="no" aria-pressed="false">✕ &nbsp;KELA OLMAYMAN</button>
-      </div>
-      <p class="err" id="err" role="alert"></p>
-      <button type="button" class="gbtn" id="send">TASDIQLASH →</button>
-    </div>
-    <div class="thanks" id="thanks" aria-live="polite">
-      <div class="ico">💌</div>
-      <p class="big">Rahmat!</p>
-      <p class="it">Javobingiz qabul qilindi</p>
-      <p class="it" style="font-size:17px;margin-top:10px;color:#bba982">Telegram ochilgach, kelin-kuyovni tanlab xabarni yuboring. Xabar matni ochilmasa, uni joylashtiring: u allaqachon nusxalangan.</p>
-    </div>
-  </div>
-</section>
-
 <section class="sec d foot">
   <canvas class="fspark" aria-hidden="true"></canvas>
   <div class="in">
@@ -310,7 +286,7 @@ button{font:inherit;cursor:pointer}
   </div>
 </section>
 
-<audio id="song" src="klent.mp3#t=58,95" preload="auto" playsinline></audio>
+<audio id="song" src="musiqa.m4a" preload="auto" loop playsinline></audio>
 <button type="button" class="music" id="musicBtn" aria-label="Musiqani o'chirish"><span class="note">♫</span></button>
 <div class="toast" id="toast" role="status"></div>
 
@@ -371,20 +347,6 @@ button{font:inherit;cursor:pointer}
   var cb=document.querySelectorAll(".cur button");
   cb.forEach(function(b){b.addEventListener("click",function(){cb.forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});document.getElementById("curnote").textContent=notes[b.dataset.c];});});
 
-  var answer=null;
-  var btns=document.querySelectorAll(".ch");
-  btns.forEach(function(b){b.addEventListener("click",function(){answer=b.dataset.v;btns.forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});document.getElementById("err").textContent="";});});
-  document.getElementById("send").addEventListener("click",function(){
-    var name=document.getElementById("gname").value.trim(),err=document.getElementById("err");
-    if(!name){err.textContent="Iltimos, ismingizni yozing";return;}
-    if(!answer){err.textContent="Kelaman yoki Kela olmayman ni tanlang";return;}
-    var msg="💌 To'yga javob (Dostonbek & Madinabonu, 28-noyabr)\n\nIsm: "+name+"\nJavob: "+(answer==="yes"?"✅ Kelaman":"❌ Kela olmayman")+"\n\nTabriklayman!";
-    copy(msg,"Javob nusxalandi, Telegram ochilmoqda");
-    window.open("https://t.me/share/url?url="+encodeURIComponent(location.href.split("#")[0])+"&text="+encodeURIComponent(msg),"_blank","noopener");
-    document.getElementById("form").style.display="none";
-    document.getElementById("thanks").classList.add("show");
-  });
-
   document.getElementById("share").addEventListener("click",function(){
     var link=location.href.split("#")[0];
     if(navigator.share)navigator.share({title:"Dostonbek & Madinabonu to'yi",text:"Dostonbek va Madinabonuning nikoh to'yiga taklifnoma",url:link}).catch(function(){});
@@ -393,21 +355,17 @@ button{font:inherit;cursor:pointer}
 
   // Musiqa
   var song=document.getElementById("song"),mBtn=document.getElementById("musicBtn");
-  // Faqat 0:58 – 1:35 oralig'i aylanib chaladi
-  var S0=58,S1=95;
-  function toStart(){try{song.currentTime=S0;}catch(e){}}
-  song.addEventListener("loadedmetadata",toStart);
-  song.addEventListener("timeupdate",function(){if(song.currentTime>=S1||song.currentTime<S0-1){toStart();if(song.paused&&mBtn.classList.contains("playing"))song.play();}});
-  song.addEventListener("pause",function(){if(song.currentTime>=S1-.3&&mBtn.classList.contains("playing")){toStart();song.play();}});
-  song.addEventListener("ended",function(){toStart();song.play();});
+  // musiqa.m4a — faqat 0:58–1:35 qismi (kesib olingan), "loop" bilan aylanib chaladi
+  song.addEventListener("ended",function(){song.currentTime=0;song.play().catch(function(){});});
   function setM(p){mBtn.classList.toggle("playing",p);mBtn.setAttribute("aria-label",p?"Musiqani o'chirish":"Musiqani yoqish");}
   var gestEvs=["pointerdown","touchend","mousedown","click","keydown"];
   function waitGesture(){gestEvs.forEach(function(e){window.addEventListener(e,onGesture,{passive:true,capture:true})});}
   function onGesture(){gestEvs.forEach(function(e){window.removeEventListener(e,onGesture,{capture:true})});if(song.paused&&!mBtn.dataset.off)playSong();}
   function playSong(){
-    mBtn.classList.add("on");song.volume=0;
+    mBtn.classList.add("on");song.volume=.8;
     var pr=song.play();
-    if(pr&&pr.then){pr.then(function(){setM(true);var v=0;var f=setInterval(function(){v+=.05;if(v>=.8){v=.8;clearInterval(f);}song.volume=v;},120);}).catch(function(){setM(false);waitGesture();});}
+    if(pr&&pr.then)pr.then(function(){setM(true);}).catch(function(){setM(false);waitGesture();});
+    else setM(!song.paused);
   }
   // Sayt ochilishi bilan musiqani boshlashga urinish; brauzer bloklasa, birinchi teginishda yoqiladi
   playSong();
@@ -428,21 +386,31 @@ button{font:inherit;cursor:pointer}
 
   // Oltin uchqunlar
   function sparks(cv,count){
-    if(reduce||!cv)return;var ctx=cv.getContext("2d"),ps=[],W,H,dpr=Math.min(window.devicePixelRatio||1,2);
+    if(reduce||!cv)return;var ctx=cv.getContext("2d"),ps=[],W,H,dpr=Math.min(window.devicePixelRatio||1,LOW?1:1.5);
     function size(){var r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
     size();window.addEventListener("resize",size);
+    // Uchqun rasmini bir marta chizib olamiz (har kadrda shadowBlur juda og'ir)
+    var dot=document.createElement("canvas"),R=8;dot.width=dot.height=R*2;var dc=dot.getContext("2d"),g=dc.createRadialGradient(R,R,0,R,R,R);
+    g.addColorStop(0,"rgba(255,235,180,1)");g.addColorStop(.25,"rgba(227,196,122,.9)");g.addColorStop(1,"rgba(227,196,122,0)");dc.fillStyle=g;dc.fillRect(0,0,R*2,R*2);
     for(var i=0;i<count;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.8+.4,s:Math.random()*.4+.15,a:Math.random()*Math.PI*2,t:Math.random()*.02+.005});
-    (function loop(){
-      if(cv.offsetParent!==null||cv.id!=="spark"){
-        ctx.clearRect(0,0,W,H);
-        ps.forEach(function(p){p.y-=p.s;p.a+=p.t;p.x+=Math.sin(p.a)*.3;if(p.y<-5){p.y=H+5;p.x=Math.random()*W;}
-          var o=.35+Math.sin(p.a*3)*.35;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle="rgba(227,196,122,"+Math.max(o,.08)+")";ctx.shadowColor="rgba(227,196,122,.8)";ctx.shadowBlur=6;ctx.fill();});
-      }
-      if(!cover.classList.contains("gone")||cv.id!=="spark")requestAnimationFrame(loop);
-    })();
+    var visible=cv.id==="spark",running=false,isCover=cv.id==="spark";
+    function loop(){
+      if(isCover&&cover.classList.contains("gone")){running=false;return;}
+      if(!visible||document.hidden){running=false;return;}
+      ctx.clearRect(0,0,W,H);
+      for(var j=0;j<ps.length;j++){var p=ps[j];p.y-=p.s;p.a+=p.t;p.x+=Math.sin(p.a)*.3;if(p.y<-5){p.y=H+5;p.x=Math.random()*W;}
+        ctx.globalAlpha=Math.max(.35+Math.sin(p.a*3)*.35,.08);var s=p.r*4;ctx.drawImage(dot,p.x-s/2,p.y-s/2,s,s);}
+      requestAnimationFrame(loop);
+    }
+    function start(){if(!running){running=true;requestAnimationFrame(loop);}}
+    if(!isCover&&"IntersectionObserver" in window){new IntersectionObserver(function(es){visible=es[0].isIntersecting;if(visible)start();}).observe(cv);}
+    else visible=true;
+    document.addEventListener("visibilitychange",function(){if(!document.hidden)start();});
+    start();
   }
-  sparks(document.getElementById("spark"),60);
-  sparks(document.querySelector(".fspark"),35);
+  var LOW=(navigator.hardwareConcurrency||4)<=4||(navigator.deviceMemory||4)<=2;
+  sparks(document.getElementById("spark"),LOW?25:50);
+  sparks(document.querySelector(".fspark"),LOW?15:30);
 })();
 </script>
 </body>
