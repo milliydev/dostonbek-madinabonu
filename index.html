@@ -358,18 +358,27 @@ button{font:inherit;cursor:pointer}
   // musiqa.m4a — faqat 0:58–1:35 qismi (kesib olingan), "loop" bilan aylanib chaladi
   song.addEventListener("ended",function(){song.currentTime=0;song.play().catch(function(){});});
   function setM(p){mBtn.classList.toggle("playing",p);mBtn.setAttribute("aria-label",p?"Musiqani o'chirish":"Musiqani yoqish");}
-  var gestEvs=["pointerdown","touchend","mousedown","click","keydown"];
-  function waitGesture(){gestEvs.forEach(function(e){window.addEventListener(e,onGesture,{passive:true,capture:true})});}
-  function onGesture(){gestEvs.forEach(function(e){window.removeEventListener(e,onGesture,{capture:true})});if(song.paused&&!mBtn.dataset.off)playSong();}
+  // Android Chrome'da faqat "tap" (touchend/pointerup/click) ruxsat beradi, swipe/touchstart emas.
+  // Shuning uchun musiqa haqiqatan chala boshlamaguncha har bir teginishda qayta urinib turamiz.
+  var gestEvs=["touchend","pointerup","mousedown","click","keydown"],waiting=false,hinted=false;
+  function waitGesture(){if(waiting)return;waiting=true;gestEvs.forEach(function(e){window.addEventListener(e,onGesture,{passive:true,capture:true})});}
+  function stopWaiting(){waiting=false;gestEvs.forEach(function(e){window.removeEventListener(e,onGesture,{capture:true})});}
+  function onGesture(ev){
+    if(ev&&ev.target&&mBtn.contains(ev.target))return; // tugmaning o'z handleri bor
+    if(mBtn.dataset.off||!song.paused){stopWaiting();return;}
+    var pr=song.play();
+    if(pr&&pr.then)pr.then(function(){setM(true);stopWaiting();}).catch(function(){});
+    else if(!song.paused){setM(true);stopWaiting();}
+  }
   function playSong(){
     mBtn.classList.add("on");song.volume=.8;
     var pr=song.play();
-    if(pr&&pr.then)pr.then(function(){setM(true);}).catch(function(){setM(false);waitGesture();});
+    if(pr&&pr.then)pr.then(function(){setM(true);}).catch(function(){setM(false);if(!waiting&&!hinted){hinted=true;setTimeout(function(){if(song.paused&&!mBtn.dataset.off)toast("♫ Musiqa uchun ekranga bir marta teging");},1800);}waitGesture();});
     else setM(!song.paused);
   }
   // Sayt ochilishi bilan musiqani boshlashga urinish; brauzer bloklasa, birinchi teginishda yoqiladi
   playSong();
-  mBtn.addEventListener("click",function(){if(song.paused){delete mBtn.dataset.off;song.volume=.8;song.play().then(function(){setM(true)}).catch(function(){toast("Musiqani yoqib bo'lmadi")});}else{mBtn.dataset.off="1";song.pause();setM(false);}});
+  mBtn.addEventListener("click",function(){if(song.paused){delete mBtn.dataset.off;song.volume=.8;song.play().then(function(){setM(true);stopWaiting();}).catch(function(){toast("Musiqani yoqib bo'lmadi")});}else{mBtn.dataset.off="1";song.pause();setM(false);}});
   document.addEventListener("visibilitychange",function(){if(document.hidden&&!song.paused){song.pause();song.dataset.resume="1";}else if(!document.hidden&&song.dataset.resume){song.dataset.resume="";song.play().then(function(){setM(true)}).catch(function(){setM(false)});}});
 
   // Scroll reveal
