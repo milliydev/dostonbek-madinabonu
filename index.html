@@ -295,10 +295,11 @@ button{font:inherit;cursor:pointer}
   var WEDDING=new Date("2026-11-28T18:00:00+05:00");
   var cover=document.getElementById("cover");
   var opened=false;
-  function openInv(){if(opened)return;opened=true;cover.classList.add("open");document.body.classList.add("opened");document.body.classList.remove("locked");window.scrollTo(0,0);setTimeout(function(){cover.classList.add("gone");},1500);setTimeout(startReveal,700);setTimeout(autoScroll,3200);if(song.paused)playSong();}
-  document.getElementById("openBtn").addEventListener("click",openInv);
-  // Sayt ochilishi bilan taklifnoma o'zi ochiladi
-  window.addEventListener("load",function(){setTimeout(openInv,1200);});
+  function openInv(){if(opened)return;opened=true;if(song.paused&&!mBtn.dataset.off){song.volume=.8;var p=song.play();if(p&&p.then)p.then(function(){setM(true);mBtn.classList.add("on");stopWaiting();}).catch(function(){});}cover.classList.add("open");document.body.classList.add("opened");document.body.classList.remove("locked");window.scrollTo(0,0);setTimeout(function(){cover.classList.add("gone");},1500);setTimeout(startReveal,700);setTimeout(autoScroll,3200);if(song.paused)playSong();}
+  // Taklifnoma mehmon bosganda ochiladi: shu bosish brauzerga musiqani darhol yoqishga ruxsat beradi
+  // (Android, iPhone, kompyuter — hammasida). Butun muqova bosiladigan.
+  document.getElementById("openBtn").addEventListener("click",function(e){e.stopPropagation();openInv();});
+  cover.addEventListener("click",openInv);
 
   // Avtomatik sekin pastga tushish (mehmon o'zi aylantirsa, darhol to'xtaydi va xalaqit bermaydi)
   function autoScroll(){
@@ -373,7 +374,7 @@ button{font:inherit;cursor:pointer}
   function playSong(){
     mBtn.classList.add("on");song.volume=.8;
     var pr=song.play();
-    if(pr&&pr.then)pr.then(function(){setM(true);}).catch(function(){setM(false);if(!waiting&&!hinted){hinted=true;setTimeout(function(){if(song.paused&&!mBtn.dataset.off)toast("♫ Musiqa uchun ekranga bir marta teging");},1800);}waitGesture();});
+    if(pr&&pr.then)pr.then(function(){setM(true);}).catch(function(){setM(false);if(!waiting&&!hinted){hinted=true;setTimeout(function(){if(opened&&song.paused&&!mBtn.dataset.off)toast("♫ Musiqa uchun ekranga bir marta teging");},1800);}waitGesture();});
     else setM(!song.paused);
   }
   // Sayt ochilishi bilan musiqani boshlashga urinish; brauzer bloklasa, birinchi teginishda yoqiladi
